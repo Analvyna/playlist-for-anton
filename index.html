@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>For Anton Lee</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: linear-gradient(to bottom, #0a0a50, #191970 80%, #000022);
+      color: #EAF6FF;
+      min-height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+
+    #stars {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .header-title {
+      font-family: 'Fredoka One', cursive;
+      font-size: 5.5em;
+      color: #D6E6FF;
+      text-shadow: 6px 6px 12px rgba(0, 0, 0, 0.6),
+                   -2px -2px 0px rgba(255, 255, 255, 0.3);
+      margin-top: 40px;
+      margin-bottom: 30px;
+      z-index: 2;
+      text-align: center;
+    }
+
+    .polaroid-frame {
+      background-color: #fff;
+      padding: 15px 15px 50px 15px;
+      border-radius: 5px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+      transform: rotate(-3deg);
+      margin-bottom: 50px;
+      z-index: 2;
+    }
+
+    .polaroid-image {
+      width: 250px;
+      height: 300px;
+      overflow: hidden;
+    }
+
+    .polaroid-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .button-container {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-top: 30px;
+      z-index: 2;
+    }
+
+    .action-button {
+      background: linear-gradient(to right, #3a4d99, #1f2b6c);
+      color: #EAF6FF;
+      padding: 15px 40px;
+      border: none;
+      border-radius: 40px;
+      text-decoration: none;
+      font-size: 1.1em;
+      font-weight: 700;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      width: 250px;
+      text-align: center;
+    }
+
+    .action-button:hover {
+      background: linear-gradient(to right, #5568d6, #2c3e91);
+      color: #ffffff;
+      transform: translateY(-3px);
+      box-shadow: 0 8px 16px rgba(255, 255, 255, 0.2);
+    }
+
+    @media (max-width: 600px) {
+      .header-title {
+        font-size: 3.5em;
+        margin-top: 20px;
+      }
+
+      .polaroid-image {
+        width: 200px;
+        height: 250px;
+      }
+
+      .polaroid-frame {
+        padding: 10px 10px 40px 10px;
+        margin-bottom: 30px;
+      }
+
+      .action-button {
+        width: 200px;
+        padding: 12px 30px;
+        font-size: 1em;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="stars"></canvas>
+
+  <div class="header-title">Anton Lee</div>
+
+  <div class="polaroid-frame">
+    <div class="polaroid-image">
+      <img src="anton.jpg" alt="Anton Lee" />
+    </div>
+  </div>
+
+  <div class="button-container">
+    <a href="message.html" class="action-button">MESSAGE FOR ANTON</a>
+    <a href="playlist.html" class="action-button">PLAYLIST FOR ANTON</a>
+    <a href="about.html" class="action-button">ABOUT ANTON</a> <!-- Diperbaiki -->
+  </div>
+
+  <script>
+    const canvas = document.getElementById('stars');
+    const ctx = canvas.getContext('2d');
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+
+    function drawStars(count) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let i = 0; i < count; i++) {
+        const x = Math.random() * canvas.width;
+        const y = Math.random() * canvas.height;
+        const radius = Math.random() * 1.5;
+        ctx.beginPath();
+        ctx.arc(x, y, radius, 0, 2 * Math.PI);
+        ctx.fillStyle = 'white';
+        ctx.fill();
+      }
+    }
+
+    resizeCanvas();
+    drawStars(300);
+
+    window.addEventListener('resize', () => {
+      resizeCanvas();
+      drawStars(300);
+    });
+  </script>
+
+</body>
+</html>

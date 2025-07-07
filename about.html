@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>About Anton</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: linear-gradient(to bottom, #0a0f2c, #0c1c40, #12345c); /* Blue Midnight */
+      color: #ffffff;
+      overflow-x: hidden; /* allow vertical scroll */
+      position: relative;
+      min-height: 100vh;
+    }
+
+    .stars {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .star {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: white;
+      border-radius: 50%;
+      opacity: 0.8;
+      animation: sparkle 2s infinite ease-in-out alternate;
+    }
+
+    @keyframes sparkle {
+      0% { opacity: 0.2; transform: scale(1); }
+      100% { opacity: 1; transform: scale(1.5); }
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 800px;
+      margin: 80px auto;
+      background: linear-gradient(to bottom right, rgba(20,40,70,0.85), rgba(30,60,90,0.85));
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.1),
+        0 4px 20px rgba(100, 200, 255, 0.3),
+        0 0 30px rgba(80, 180, 255, 0.2);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(174, 239, 255, 0.1);
+    }
+
+    h1 {
+      font-size: 36px;
+      margin-bottom: 20px;
+      text-align: center;
+      color: #aeefff;
+      text-shadow: 0 0 10px rgba(174, 239, 255, 0.3);
+    }
+
+    p, ul {
+      font-size: 18px;
+      line-height: 1.8;
+      text-align: justify;
+      color: #e8f8ff;
+      text-shadow: 0 0 4px rgba(255,255,255,0.05);
+    }
+
+    ul {
+      list-style: none;
+      padding-left: 0;
+      margin-bottom: 20px;
+    }
+
+    li {
+      margin-bottom: 8px;
+    }
+
+    .profile-img {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      object-fit: cover;
+      display: block;
+      margin: 0 auto 20px;
+      border: 4px solid #aeefff;
+      box-shadow: 0 0 20px #5bd8ff, inset 0 0 10px rgba(255, 255, 255, 0.1);
+      background: linear-gradient(to top left, #1f3b73, #3c68b1);
+    }
+
+    .back-button {
+      margin-top: 30px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .back-button a {
+      text-decoration: none;
+      background: linear-gradient(to right, #0d2240, #163c69); /* biru gelap glossy */
+      padding: 12px 24px;
+      border-radius: 30px;
+      color: white;
+      font-weight: bold;
+      box-shadow: 0 0 15px rgba(60,120,180,0.6);
+      transition: transform 0.2s ease, box-shadow 0.3s ease;
+    }
+
+    .back-button a:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 25px rgba(100,200,255,0.9);
+    }
+  </style>
+</head>
+<body>
+  <div class="stars" id="stars"></div>
+
+  <div class="container">
+    <img src="kiyowo.jpg" alt="Foto Anton" class="profile-img">
+    <h1>About Anton</h1>
+
+    <ul>
+      <li>📌 <strong>Full Name:</strong> Lee Chan Young (이찬영)</li>
+      <li>💙 <strong>Stage Name:</strong> Anton (안톤)</li>
+      <li>🎂 <strong>Date of Birth:</strong> March 21, 2004</li>
+      <li>🌍 <strong>Nationality:</strong> Korean-American</li>
+      <li>📍 <strong>Birthplace:</strong> Boston, Massachusetts, USA</li>
+      <li>🏠 <strong>Raised in:</strong> New Jersey, USA</li>
+      <li>🏊‍♂️ <strong>Past Career:</strong> Former professional swimmer</li>
+      <li>🩸 <strong>Blood Type:</strong> O</li>
+      <li>🌟 <strong>MBTI:</strong> INTP</li>
+      <li>💼 <strong>Agency:</strong> SM Entertainment</li>
+      <li>📅 <strong>Debut:</strong> September 4, 2023 with RIIZE</li>
+    </ul>
+
+    <p>
+      💬 <strong>Short Introduction:</strong><br>
+      Anton is a Korean-American artist and a proud member of RIIZE under SM Entertainment. Known for his calm aura, gentle voice, and love for music, Anton has charmed fans worldwide. Before becoming an idol, he was a successful swimmer, having competed in various championships during his youth. He is also the son of the legendary music producer Yoon Sang, which makes his deep connection to music feel almost natural.
+    </p>
+
+    <p>
+      With a strong sense of identity and quiet charisma, Anton is not just a performer but also someone who appreciates the artistry behind music, often sharing songs, making playlists, and showing his personal taste to fans.
+    </p>
+
+    <div class="back-button">
+      <a href="index.html">← Back</a>
+    </div>
+  </div>
+
+  <script>
+    const starsContainer = document.getElementById('stars');
+    for (let i = 0; i < 150; i++) {
+      const star = document.createElement('div');
+      star.classList.add('star');
+      star.style.top = Math.random() * 100 + '%';
+      star.style.left = Math.random() * 100 + '%';
+      star.style.animationDuration = (Math.random() * 3 + 2) + 's';
+      starsContainer.appendChild(star);
+    }
+  </script>
+</body>
+</html>

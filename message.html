@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Message for Anton</title>
+    <style>
+        /* Import fonts from Google Fonts */
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap'); /* For the red text */
+
+        /* Base body styles */
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #00001a; /* Very dark blue, almost black */
+            color: #e0e0ff; /* Soft white/light blue for text */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            justify-content: flex-start;
+            position: relative; /* Needed for absolute positioning of stars */
+            overflow-x: hidden; /* Prevent horizontal scroll */
+        }
+
+        /* Stars background */
+        #stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1; /* Send to back */
+            overflow: hidden;
+            background: radial-gradient(ellipse at center, #0a0a50 0%, #000022 100%); /* Blue night gradient */
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            opacity: 0;
+            animation: twinkle 2s infinite ease-in-out alternate;
+        }
+
+        @keyframes twinkle {
+            0% { opacity: 0; transform: scale(0.5); }
+            50% { opacity: 1; transform: scale(1.2); }
+            100% { opacity: 0; transform: scale(0.5); }
+        }
+
+        /* Initial "Happy Birthday Anton Lee" intro screen - UPDATED BACKGROUND */
+        #intro-message {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 10, 0.7); /* Slightly transparent dark background to show stars */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            overflow: hidden;
+            animation: fadeOut 1s ease-in-out 3.5s forwards; /* Fades out after 3.5 seconds */
+        }
+
+        /* Intro text - UPDATED FONT SIZE */
+        .intro-text {
+            font-family: 'Pacifico', cursive; /* Use Pacifico for this specific text */
+            font-size: 5.5rem; /* Made larger */
+            color: #FF6347; /* Tomato Red */
+            text-align: center;
+            text-shadow:
+                0 0 15px rgba(255, 99, 71, 0.8), /* Red glow */
+                0 0 30px rgba(255, 99, 71, 0.6),
+                0 0 45px rgba(255, 99, 71, 0.4),
+                0 4px 10px rgba(0, 0, 0, 0.6);
+            opacity: 1;
+            animation: fadeIn 1s ease-in-out, pulse 2.5s ease-in-out infinite;
+            padding: 0 20px; /* Add some padding for small screens */
+        }
+
+        /* Keyframes for animations */
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+        @keyframes fadeOut { to { opacity: 0; visibility: hidden; } }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* Main content styling */
+        .content-wrapper {
+            width: 100%;
+            max-width: 800px;
+            padding: 20px;
+            margin-top: 50px; /* Space from top */
+            position: relative;
+            z-index: 1; /* Above stars */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .section-box {
+            background-color: rgba(17, 17, 68, 0.8); /* Dark blue with transparency */
+            padding: 40px 30px;
+            border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+            width: 100%;
+            box-sizing: border-box;
+            text-align: center;
+            margin-bottom: 30px; /* Space between sections */
+        }
+
+        .section-box h1, .section-box h2 {
+            font-family: 'Dancing Script', cursive;
+            color: #ffe4e1; /* Misty Rose */
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
+            margin-bottom: 20px;
+        }
+
+        .section-box h1 {
+            font-size: 3.5rem;
+            color: #ffccff; /* Lighter pink for main title */
+        }
+
+        .foryou-image {
+            max-width: 70%; /* Adjust size */
+            height: auto;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+            margin: 30px auto;
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            display: block;
+        }
+
+        /* Message display styling */
+        .message-box-group {
+            width: 100%;
+            max-width: 700px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .message-box {
+            background-color: rgba(12, 12, 58, 0.9); /* Slightly darker, more opaque */
+            padding: 25px;
+            border-radius: 18px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            text-align: left;
+            font-size: 1.05rem;
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .message-box p {
+            margin: 5px 0;
+            line-height: 1.6;
+            color: #e0e0ff;
+        }
+
+        .message-box strong {
+            color: #FFD700; /* Gold */
+            font-weight: bold;
+        }
+
+        /* Updated back button styling for matching background */
+        .back-button-container {
+            margin-top: 40px;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .back-button-container a {
+            background-color: rgba(10, 10, 50, 0.8); /* Dark blue, subtle transparency */
+            color: white;
+            padding: 12px 25px;
+            border: 1px solid rgba(255, 255, 255, 0.2); /* Subtle white border */
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+        }
+
+        .back-button-container a:hover {
+            background-color: rgba(15, 15, 60, 0.9); /* Slightly darker/more opaque on hover */
+            transform: translateY(-2px);
+            box-shadow: 0 7px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .intro-text {
+                font-size: 4rem; /* Adjusted for smaller screens */
+            }
+            .section-box {
+                padding: 30px 20px;
+            }
+            .section-box h1 {
+                font-size: 2.8rem;
+            }
+            .foryou-image {
+                max-width: 85%;
+            }
+            .back-button-container a {
+                font-size: 1em;
+                padding: 10px 20px;
+            }
+            .message-box {
+                padding: 20px;
+                font-size: 0.95rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .intro-text {
+                font-size: 3rem; /* Further adjusted for very small screens */
+            }
+            .section-box h1 {
+                font-size: 2.2rem;
+            }
+            .foryou-image {
+                max-width: 95%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="stars"></div>
+
+    <div id="intro-message">
+        <p class="intro-text">Happy Birthday Anton Lee</p>
+    </div>
+
+    <div class="content-wrapper">
+
+        <div class="section-box">
+            <h1>Special Place for Anton</h1>
+            <img src="foryou.jpg" alt="A special image for Anton Lee" class="foryou-image">
+        </div>
+
+        <div class="message-box-group" id="messageContainer">
+            <div class="message-box">
+                <p><strong>To Anton:</strong></p>
+                <p>Happy brithday, Anton! you our days brighter just by being you. Here's a little song from my heart to yours🩵</p>
+                <p>💌</p>
+            </div>
+
+            <div class="message-box">
+                <p><strong>To Anton:</strong></p>
+                <p>To the boy who always shares good music this time, we're sharing ours with you. Have the best brithday ever</p>
+                <p>💌</p>
+            </div>
+
+            <div class="message-box">
+                <p><strong>To Anton:</strong></p>
+                <p>Wishing you laughter, good food and songs that make you deserver it all</p>
+                <p>💌</p>
+            </div>
+
+            <div class="message-box">
+                <p><strong>To Anton:</strong></p>
+                <p>You've given us so mamy memories, so here's a song to say thank you happy brithday our sunschine with headphones🎧🌟</p>
+                <p>💌</p>
+            </div>
+
+            <div class="message-box">
+                <p><strong>To Anton:</strong></p>
+                <p>Its you special day, Anton! May thid playlist bring youas much joy as you bring to all uf use evety single day</p>
+                <p>💌</p>
+            </div>
+
+            <div class="message-box">
+                <p><strong>To Anton:</strong></p>
+                <p>No better reason to celebrate than you, Anton. Happy brithday! Let this playlist be the soundtrack to your smile today🩵</p>
+                <p>💌</p>
+            </div>
+        </div>
+
+        <div class="back-button-container">
+            <a href="index.html">Back to Home</a>
+        </div>
+
+    </div>
+
+    <script>
+        // --- Page Initialization (hanya untuk intro dan bintang) ---
+
+        // Menghilangkan intro setelah 3.5 detik
+        setTimeout(() => {
+            const intro = document.getElementById("intro-message");
+            if (intro) intro.style.display = "none";
+        }, 3500);
+
+        // Membuat latar belakang bintang
+        const starContainer = document.getElementById("stars");
+        for (let i = 0; i < 150; i++) { // Lebih banyak bintang untuk latar belakang yang lebih kaya
+            const star = document.createElement("div");
+            star.className = "star";
+            star.style.width = (Math.random() * 2) + 1 + "px"; // Ukuran acak
+            star.style.height = star.style.width;
+            star.style.top = Math.random() * 100 + "%";
+            star.style.left = Math.random() * 100 + "%";
+            star.style.animationDelay = Math.random() * 3 + "s"; // Penundaan acak
+            starContainer.appendChild(star);
+        }
+    </script>
+
+</body>
+</html>

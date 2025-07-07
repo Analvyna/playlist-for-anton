@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Playlist for Anton</title>
+  <style>
+    body {
+      background-color: #0E162B;
+      color: #E0E7FF;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      background-color: #1A2E4E;
+      padding: 40px 20px;
+      border-radius: 20px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+      width: 100%;
+      max-width: 700px;
+      margin-bottom: 30px;
+      box-sizing: border-box;
+      text-align: center;
+      position: relative;
+      height: 450px;
+      border-top: 2px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .image-background-wrapper {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      border-radius: 20px;
+      overflow: hidden;
+    }
+
+    .image-background-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      position: absolute;
+    }
+
+    .image-background-wrapper::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: rgba(0, 0, 0, 0.55);
+      z-index: 1;
+    }
+
+    .content-overlay {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+    }
+
+    h1 {
+      color: #fff;
+      font-size: 2.8em;
+      margin-bottom: 20px;
+      text-shadow: 2px 2px 7px rgba(0, 0, 0, 0.7);
+    }
+
+    .add-track-form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      width: 100%;
+      padding: 0 20px;
+    }
+
+    .add-track-form input {
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #446688;
+      background-color: rgba(255, 255, 255, 0.08);
+      color: #E0E7FF;
+      font-size: 1em;
+      background-image: linear-gradient(to bottom, rgba(255,255,255,0.05), rgba(0,0,0,0.05));
+    }
+
+    .add-track-form input::placeholder {
+      color: #A0B0CC;
+    }
+
+    .add-track-form button {
+      background-color: #3C638E;
+      color: white;
+      padding: 12px 25px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1.1em;
+      font-weight: bold;
+      background-image: linear-gradient(to top, rgba(255,255,255,0.15), rgba(0,0,0,0.15));
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.6);
+    }
+
+    .playlist-section {
+      background-color: #1A2E4E;
+      border-radius: 16px;
+      padding: 20px;
+      max-width: 700px;
+      width: 100%;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+
+    .playlist-section h2 {
+      font-size: 2.2em;
+      margin-bottom: 20px;
+      color: white;
+    }
+
+    .playlist {
+      list-style: none;
+      padding: 0;
+      width: 100%;
+    }
+
+    .playlist-item {
+      background-color: #25426B;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 15px 20px;
+      margin-bottom: 15px;
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      background-image: linear-gradient(to bottom, rgba(255,255,255,0.1), rgba(0,0,0,0.1));
+    }
+
+    .spotify-embed-container {
+      width: 100%;
+      margin-bottom: 15px;
+    }
+
+    .remove-btn {
+      background-color: #E63946;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 8px 12px;
+      cursor: pointer;
+      font-size: 0.9em;
+      align-self: flex-end;
+    }
+
+    .back-button-container {
+      margin-top: 30px;
+      text-align: center;
+    }
+
+    .back-button-container a {
+      background-color: #3C638E;
+      color: white;
+      padding: 12px 25px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: bold;
+      display: inline-block;
+      min-width: 200px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="image-background-wrapper">
+      <img src="kiyowo.jpg" alt="Background Image">
+    </div>
+    <div class="content-overlay">
+      <h1>Playlist for Anton</h1>
+      <div class="add-track-form">
+        <input type="text" id="spotifyUrl" placeholder="paste spotify url here" required>
+        <button onclick="addTrack()">Add to Playlist</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="playlist-section">
+    <h2>Added Tracks</h2>
+    <ul id="playlist" class="playlist">
+      <li style="text-align: center; color: #ccc;">Belum ada lagu di playlist. Tambahkan satu!</li>
+    </ul>
+  </div>
+
+  <div class="back-button-container">
+    <a href="index.html">Back</a>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script>
+    // START OF CORRECTED FIREBASE CONFIGURATION
+    const firebaseConfig = {
+      apiKey: "AIzaSyCh39UthfGp",
+      authDomain: "anton-web-message.firebaseapp.com",
+      projectId: "anton-web-message",
+      storageBucket: "anton-web-message.appspot.com",
+      messagingSenderId: "766144380288",
+      appId: "1:766144380288:web:898949c43923cfd8a01565"
+    };
+    // END OF CORRECTED FIREBASE CONFIGURATION
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    const spotifyUrlRegex = /^(?:https?:\/\/(?:open\.spotify\.com\/(track|album|playlist|artist)\/([a-zA-Z0-9]+)(?:\?.*)?|spotify:((track|album|playlist|artist):)?([a-zA-Z0-9]+)))$/;
+
+    async function addTrack() {
+      const spotifyUrlInput = document.getElementById('spotifyUrl');
+      const url = spotifyUrlInput.value.trim();
+
+      if (url === '') {
+        alert('Spotify URL tidak boleh kosong!');
+        return;
+      }
+
+      const match = url.match(spotifyUrlRegex);
+      if (!match) {
+        alert('Masukkan URL Spotify yang valid.');
+        return;
+      }
+
+      let type = match[1] || match[4];
+      let id = match[2] || match[5];
+
+      try {
+        await db.collection('playlist_urls').add({
+          spotifyUrl: url,
+          spotifyType: type,
+          spotifyId: id,
+          addedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        spotifyUrlInput.value = '';
+        alert('URL Spotify berhasil ditambahkan!');
+        fetchPlaylist(); // Ini baris penting yang baru ditambahkan
+      } catch (error) {
+        console.error("Error adding URL:", error);
+        alert(`Gagal menambahkan URL: ${error.message}`);
+      }
+    }
+
+    async function fetchPlaylist() {
+      const playlistElement = document.getElementById('playlist');
+      db.collection('playlist_urls').orderBy('addedAt', 'desc').onSnapshot((snapshot) => {
+        playlistElement.innerHTML = '';
+
+        if (snapshot.empty) {
+          playlistElement.innerHTML = '<li style="text-align: center; color: #ccc;">Belum ada lagu di playlist. Tambahkan satu!</li>';
+          return;
+        }
+
+        snapshot.forEach(doc => {
+          const track = doc.data();
+          const listItem = document.createElement('li');
+          listItem.className = 'playlist-item';
+          listItem.setAttribute('data-id', doc.id);
+
+          let embedHtml = '';
+          // Corrected the Googleusercontent URL structure for Spotify embed
+          if (track.spotifyId && (track.spotifyType === 'track' || track.spotifyType === 'album' || track.spotifyType === 'playlist')) {
+            const embedUrl = `https://open.spotify.com/embed/${track.spotifyType}/${track.spotifyId}`; // Corrected URL
+            const iframeHeight = (track.spotifyType === 'track') ? 80 : 352;
+            embedHtml = `
+              <div class="spotify-embed-container">
+                <iframe style="border-radius:12px" src="${embedUrl}"
+                  width="100%" height="${iframeHeight}" frameBorder="0" allowfullscreen=""
+                  allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                  loading="lazy">
+                </iframe>
+              </div>
+            `;
+          } else {
+            embedHtml = `<span><strong>URL:</strong> <a href="${track.spotifyUrl}" target="_blank" style="color: #9EC0FF;">${track.spotifyUrl}</a></span>`;
+          }
+
+          listItem.innerHTML = `
+            ${embedHtml}
+            <button class="remove-btn" onclick="removeTrack('${doc.id}')">Hapus</button>
+          `;
+          playlistElement.appendChild(listItem);
+        });
+      });
+    }
+
+    async function removeTrack(id) {
+      if (!confirm('Yakin ingin menghapus lagu ini?')) return;
+      try {
+        await db.collection('playlist_urls').doc(id).delete();
+        alert('Lagu berhasil dihapus!');
+      } catch (error) {
+        console.error("Error removing URL:", error);
+        alert(`Gagal menghapus: ${error.message}`);
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", fetchPlaylist);
+  </script>
+</body>
+</html>
