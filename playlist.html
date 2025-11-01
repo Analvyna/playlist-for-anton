@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Playlist for Anton</title>
   <style>
-    /* DESIGN FROM THE FIRST CODE (DARK THEME + KIYOWO.JPG) */
+    /* DESIGN DARI KODE ASLI ANDA (DARK THEME) */
     body {
       background-color: #0E162B;
       color: #E0E7FF;
@@ -216,7 +216,7 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
   <script>
-    // Your Firebase configuration
+    // Konfigurasi Firebase Anda
     const firebaseConfig = {
       apiKey: "AIzaSyCfaxJylSTSs2pptVxw-ebnkOEZsLEmtV8",
       authDomain: "ana-cantiii.firebaseapp.com",
@@ -230,7 +230,7 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    // Regex for Spotify URL validation
+    // Regex untuk validasi URL Spotify
     const spotifyUrlRegex = /^(?:https?:\/\/(?:open\.spotify\.com\/(track|album|playlist|artist)\/([a-zA-Z0-9]+)(?:\?.*)?|spotify:((track|album|playlist|artist):)?([a-zA-Z0-9]+)))$/;
 
     async function addSong() {
@@ -250,7 +250,7 @@
         alert('Please enter a valid Spotify URL.'); 
         return;
       }
-      // Get the correct type and ID from the regex result
+      // Dapatkan tipe dan ID yang benar dari hasil regex
       type = match[1] || match[4];
       id = match[2] || match[5];
 
@@ -282,18 +282,18 @@
       songBlock.className = 'song-block';
       songBlock.setAttribute('data-id', doc.id);
       
-      // Using the correct Spotify embed URL format
+      // Menggunakan tipe "track", "album", atau "playlist"
       if (data.spotifyId && (data.spotifyType === 'track' || data.spotifyType === 'album' || data.spotifyType === 'playlist')) {
         
-        // The correct Spotify EMBED URL:
-        const embedUrl = `https://open.spotify.com/embed/${data.spotifyType}/${data.spotifyId}?utm_source=generator&theme=0`; 
+        // **KODE YANG DIPERBAIKI (URL EMBED KRITIS):** Menggunakan format URL embed resmi yang benar
+        const embedUrl = `https://embed.spotify.com/?uri=spotify:${data.spotifyType}:${data.spotifyId}&theme=0`;
         
-        // Iframe height adjusted for better visibility
+        // Tinggi iframe disesuaikan
         const iframeHeight = (data.spotifyType === 'track') ? 152 : 352;
         
         const iframe = document.createElement('iframe');
         iframe.style.borderRadius = '12px';
-        iframe.src = embedUrl;
+        iframe.src = embedUrl; // Menggunakan URL yang sudah dikoreksi
         iframe.width = '100%';
         iframe.height = iframeHeight;
         iframe.frameBorder = '0';
@@ -305,7 +305,7 @@
         embedContainer.appendChild(iframe);
         songBlock.appendChild(embedContainer);
       } else {
-        // Display message if ID or Type is invalid (e.g., "artist")
+        // Tampilkan pesan jika ID atau Tipe tidak valid (misalnya, "artist")
         const errorText = document.createElement('p');
         errorText.textContent = `Cannot load item of type: ${data.spotifyType || 'unknown'}`;
         errorText.style.color = '#ff9999';
@@ -314,32 +314,32 @@
 
       const removeBtn = document.createElement('button');
       removeBtn.className = 'remove-btn';
-      removeBtn.textContent = 'Remove'; // Text changed to English
+      removeBtn.textContent = 'Remove'; 
       removeBtn.onclick = () => removeSong(doc.id);
       songBlock.appendChild(removeBtn);
 
-      // Add the new item at the top
+      // Tambahkan item baru di bagian atas
       playlistElement.prepend(songBlock);
     }
 
     async function fetchPlaylist() {
         const playlistElement = document.getElementById('playlist');
-        playlistElement.innerHTML = '<p style="text-align: center; color: #ccc;">Loading songs...</p>'; // Initial loading message
+        playlistElement.innerHTML = '<p style="text-align: center; color: #ccc;">Loading songs...</p>'; 
 
-        // Use onSnapshot for real-time updates
+        // Gunakan onSnapshot untuk pembaruan real-time
         db.collection('ana_playlist_items').orderBy('addedAt', 'desc').onSnapshot((snapshot) => {
             
-            // Clear the initial loading message
-            if (playlistElement.querySelector('p').textContent === 'Loading songs...') {
+            // Hapus pesan loading awal
+            if (playlistElement.querySelector('p') && playlistElement.querySelector('p').textContent === 'Loading songs...') {
                 playlistElement.innerHTML = '';
             }
 
             if (snapshot.empty) {
-                playlistElement.innerHTML = '<p style="text-align: center; color: #ccc;">No songs in the playlist yet. Add one!</p>'; // Text changed to English
+                playlistElement.innerHTML = '<p style="text-align: center; color: #ccc;">No songs in the playlist yet. Add one!</p>'; 
                 return;
             }
 
-            // Process changes only
+            // Proses hanya perubahan
             snapshot.docChanges().forEach(change => {
                 if (change.type === "added") {
                     displaySong(change.doc);
@@ -348,7 +348,7 @@
                     displaySong(change.doc); 
                 }
                 if (change.type === "removed") {
-                    // Remove element if data is deleted from Firestore
+                    // Hapus elemen jika data dihapus dari Firestore
                     const removedItem = document.querySelector(`.song-block[data-id="${change.doc.id}"]`);
                     if (removedItem) {
                         removedItem.remove();
@@ -358,18 +358,18 @@
 
         }, (error) => {
             console.error("Error fetching playlist:", error);
-            playlistElement.innerHTML = '<p style="text-align: center; color: #ff6666;">Failed to load playlist. Check your connection or Firebase rules.</p>'; // Text changed to English
+            playlistElement.innerHTML = '<p style="text-align: center; color: #ff6666;">Failed to load playlist. Check your connection or Firebase rules.</p>'; 
         });
     }
 
     async function removeSong(id) {
-      if (!confirm('Are you sure you want to delete this song?')) return; // Text changed to English
+      if (!confirm('Are you sure you want to delete this song?')) return; 
       try {
         await db.collection('ana_playlist_items').doc(id).delete();
-        alert('Song successfully deleted!'); // Text changed to English
+        alert('Song successfully deleted!'); 
       } catch (error) {
         console.error("Error removing song:", error);
-        alert(`Failed to delete song: ${error.message}`); // Text changed to English
+        alert(`Failed to delete song: ${error.message}`); 
       }
     }
 
