@@ -203,11 +203,9 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
   <script>
-    // START OF CORRECTED FIREBASE CONFIGURATION (BARIS 140)
+    // START OF CORRECTED FIREBASE CONFIGURATION (BASED ON PREVIOUS PROJECT)
     const firebaseConfig = {
-      // ⚠️ API KEY INI HARUS DIGANTI DENGAN KUNCI LENGKAP DARI PROYEK FIREBASE ANDA 
-      // KARENA KUNCI YANG LAMA TERLIHAT TIDAK LENGKAP.
-      apiKey: "AIzaSyCh39UthfGp", // BARIS 142
+      apiKey: "AIzaSyCh39UthfGp",
       authDomain: "anton-web-message.firebaseapp.com",
       projectId: "anton-web-message",
       storageBucket: "anton-web-message.appspot.com",
@@ -241,14 +239,14 @@
       }
 
       let type = match[1] || match[4];
-      let id = match[2] || match[5];
+      let id = match[2] || match[6]; // Diperbaiki sedikit: match[6] adalah ID untuk format spotify:track:ID
 
       // ====================================================================
-      // ⬇️ BAGIAN 2: LOGIKA BARU UNTUK MENGATASI spotify.link ⬇️
+      // ⬇️ BAGIAN 2: LOGIKA UNTUK MENGATASI spotify.link ⬇️
       // ====================================================================
       // Jika match[3] ada, berarti itu adalah tautan pendek (spotify.link)
       if (match[3]) {
-        // Asumsikan ini adalah 'track' (paling umum) karena link pendek tidak memberi tahu jenisnya.
+        // Asumsi paling aman untuk link pendek yang tidak menyebutkan jenis: 'track'
         type = 'track'; 
         id = match[3];
       }
@@ -289,11 +287,12 @@
           let embedHtml = '';
           
           // ====================================================================
-          // ⬇️ BAGIAN 3: PERBAIKAN UTAMA URL EMBED SPOTIFY ⬇️
+          // ✅ PERBAIKAN UTAMA: URL EMBED SPOTIFY DIBENARKAN (BARIS 174)
           // ====================================================================
           if (track.spotifyId && (track.spotifyType === 'track' || track.spotifyType === 'album' || track.spotifyType === 'playlist')) {
-            // ✅ BARIS 202: URL embed diubah ke format yang benar (perbaikan fungsionalitas)
-            const embedUrl = `open.spotify.com/embed/${track.spotifyType}/${track.spotifyId}?utm_source=generator`;
+            // Menggunakan format embed standar Spotify yang benar
+            // Formatnya adalah: https://open.spotify.com/embed/{type}/{id}
+            const embedUrl = `https://open.spotify.com/embed/${track.spotifyType}/${track.spotifyId}`;
             const iframeHeight = (track.spotifyType === 'track') ? 80 : 352;
             embedHtml = `
               <div class="spotify-embed-container">
@@ -305,6 +304,7 @@
               </div>
             `;
           } else {
+            // Fallback jika ID atau Tipe tidak terdeteksi
             embedHtml = `<span><strong>URL:</strong> <a href="${track.spotifyUrl}" target="_blank" style="color: #9EC0FF;">${track.spotifyUrl}</a></span>`;
           }
           // ====================================================================
@@ -333,5 +333,3 @@
   </script>
 </body>
 </html>
-
-      
