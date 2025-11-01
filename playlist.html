@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Playlist for Anton</title>
+  <title>Anton's Playlist</title>
   <style>
+    /* DARK THEME STYLING */
     body {
       background-color: #0E162B;
       color: #E0E7FF;
@@ -28,7 +29,7 @@
       box-sizing: border-box;
       text-align: center;
       position: relative;
-      height: 450px;
+      height: 400px;
       border-top: 2px solid rgba(255, 255, 255, 0.1);
     }
 
@@ -47,6 +48,11 @@
       position: absolute;
       top: 0;
       left: 0;
+    }
+    
+    /* Kiyowo.jpg image reference */
+    .image-background-wrapper img[alt="Kiyowo Image"] {
+      content: url('kiyowo.jpg'); /* Ensure the image path is correct */
     }
 
     .image-background-wrapper::before {
@@ -130,20 +136,29 @@
       width: 100%;
     }
 
-    .playlist-item {
+    .song-block {
       background-color: #25426B;
       border: 1px solid rgba(255, 255, 255, 0.2);
       padding: 15px 20px;
-      margin-bottom: 15px;
+      margin: 15px auto;
       border-radius: 10px;
       display: flex;
       flex-direction: column;
       background-image: linear-gradient(to bottom, rgba(255,255,255,0.1), rgba(0,0,0,0.1));
+      position: relative;
+      max-width: 600px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
     }
-
+    
     .spotify-embed-container {
       width: 100%;
-      margin-bottom: 15px;
+    }
+
+    iframe {
+        border-radius: 12px;
+        width: 100%;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        display: block;
     }
 
     .remove-btn {
@@ -155,8 +170,9 @@
       cursor: pointer;
       font-size: 0.9em;
       align-self: flex-end;
+      margin-top: 10px;
     }
-
+    
     .back-button-container {
       margin-top: 30px;
       text-align: center;
@@ -178,22 +194,22 @@
 
   <div class="container">
     <div class="image-background-wrapper">
-      <img src="kiyowo.jpg" alt="Background Image">
+      <img src="kiyowo.jpg" alt="Kiyowo Image">
     </div>
     <div class="content-overlay">
-      <h1>Playlist for Anton</h1>
+      <h1>Anton's Playlist</h1>
       <div class="add-track-form">
-        <input type="text" id="spotifyUrl" placeholder="paste spotify url here" required>
-        <button onclick="addTrack()">Add to Playlist</button>
+        <input type="text" id="spotifyUrl" placeholder="Paste Spotify URL here" required>
+        <button onclick="addSong()">Add to Playlist</button>
       </div>
     </div>
   </div>
 
   <div class="playlist-section">
     <h2>Added Tracks</h2>
-    <ul id="playlist" class="playlist">
-      <li style="text-align: center; color: #ccc;">Belum ada lagu di playlist. Tambahkan satu!</li>
-    </ul>
+    <div class="playlist" id="playlist">
+      <p style="text-align: center; color: #ccc;">Loading songs...</p>
+    </div>
   </div>
 
   <div class="back-button-container">
@@ -203,133 +219,143 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
   <script>
-    // START OF CORRECTED FIREBASE CONFIGURATION (BASED ON PREVIOUS PROJECT)
+    // FIREBASE CONFIGURATION (FROM YOUR LAST STABLE CODE)
     const firebaseConfig = {
-      apiKey: "AIzaSyCh39UthfGp",
-      authDomain: "anton-web-message.firebaseapp.com",
-      projectId: "anton-web-message",
-      storageBucket: "anton-web-message.appspot.com",
-      messagingSenderId: "766144380288",
-      appId: "1:766144380288:web:898949c43923cfd8a01565"
+      apiKey: "AIzaSyCfaxJylSTSs2pptVxw-ebnkOEZsLEmtV8",
+      authDomain: "ana-cantiii.firebaseapp.com",
+      projectId: "ana-cantiii",
+      storageBucket: "ana-cantiii.firebasestorage.app",
+      messagingSenderId: "997694908881",
+      appId: "1:997694908881:web:b8ab2a0cb88f31d8cb18f0",
+      measurementId: "G-94HP5DJ4MF"
     };
-    // END OF CORRECTED FIREBASE CONFIGURATION
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    // ====================================================================
-    // ⬇️ BAGIAN 1: PERUBAHAN REGEX UNTUK MENDUKUNG spotify.link ⬇️
-    // ====================================================================
-    const spotifyUrlRegex = /^(?:https?:\/\/(?:open\.spotify\.com\/(track|album|playlist|artist)\/([a-zA-Z0-9]+)(?:\?.*)?|spotify\.link\/([a-zA-Z0-9]+)|spotify:((track|album|playlist|artist):)?([a-zA-Z0-9]+)))$/;
-    // ====================================================================
+    // Spotify URL validation Regex
+    const spotifyUrlRegex = /^(?:https?:\/\/(?:open\.spotify\.com\/(track|album|playlist|artist)\/([a-zA-Z0-9]+)(?:\?.*)?|spotify:((track|album|playlist|artist):)?([a-zA-Z0-9]+)))$/;
 
-    async function addTrack() {
+    async function addSong() {
       const spotifyUrlInput = document.getElementById('spotifyUrl');
       const url = spotifyUrlInput.value.trim();
-
+      
       if (url === '') {
-        alert('Spotify URL tidak boleh kosong!');
+        alert('Spotify URL cannot be empty!');
         return;
       }
+
+      let type = '';
+      let id = '';
 
       const match = url.match(spotifyUrlRegex);
       if (!match) {
-        alert('Masukkan URL Spotify yang valid.');
+        alert('Please enter a valid Spotify URL.');
         return;
       }
+      type = match[1] || match[4];
+      id = match[2] || match[5];
 
-      let type = match[1] || match[4];
-      let id = match[2] || match[6]; // Diperbaiki sedikit: match[6] adalah ID untuk format spotify:track:ID
-
-      // ====================================================================
-      // ⬇️ BAGIAN 2: LOGIKA UNTUK MENGATASI spotify.link ⬇️
-      // ====================================================================
-      // Jika match[3] ada, berarti itu adalah tautan pendek (spotify.link)
-      if (match[3]) {
-        // Asumsi paling aman untuk link pendek yang tidak menyebutkan jenis: 'track'
-        type = 'track'; 
-        id = match[3];
-      }
-      // ====================================================================
-      
       try {
-        await db.collection('playlist_urls').add({
+        await db.collection('ana_playlist_items').add({
           spotifyUrl: url,
           spotifyType: type,
           spotifyId: id,
+          message: "", // Empty message since the input was removed
           addedAt: firebase.firestore.FieldValue.serverTimestamp()
         });
         spotifyUrlInput.value = '';
-        alert('URL Spotify berhasil ditambahkan!');
-        fetchPlaylist(); 
+        alert('Song successfully added!');
       } catch (error) {
-        console.error("Error adding URL:", error);
-        alert(`Gagal menambahkan URL: ${error.message}`);
+        console.error("Error adding data:", error);
+        alert(`Failed to add song: ${error.message}`);
       }
     }
 
-    async function fetchPlaylist() {
+    function displaySong(doc) {
+      const data = doc.data();
       const playlistElement = document.getElementById('playlist');
-      db.collection('playlist_urls').orderBy('addedAt', 'desc').onSnapshot((snapshot) => {
-        playlistElement.innerHTML = '';
+      
+      const existingItem = document.querySelector(`.song-block[data-id="${doc.id}"]`);
+      if (existingItem) {
+          existingItem.remove();
+      }
 
-        if (snapshot.empty) {
-          playlistElement.innerHTML = '<li style="text-align: center; color: #ccc;">Belum ada lagu di playlist. Tambahkan satu!</li>';
-          return;
-        }
+      const songBlock = document.createElement('div');
+      songBlock.className = 'song-block';
+      songBlock.setAttribute('data-id', doc.id);
+      
+      // ====================================================================
+      // 🔥 USING THE PROVEN WORKING EMBED URL 🔥
+      // ====================================================================
+      if (data.spotifyId && (data.spotifyType === 'track' || data.spotifyType === 'album' || data.spotifyType === 'playlist')) {
+        
+        // This is the URL format that successfully loaded the music
+        const embedUrl = `https://open.spotify.com/embed/${data.spotifyType}/${data.spotifyId}?utm_source=generator`; 
+        
+        // Iframe height based on track/album/playlist type
+        const iframeHeight = (data.spotifyType === 'track') ? 152 : 352;
+        
+        const iframe = document.createElement('iframe');
+        iframe.style.borderRadius = '12px';
+        iframe.src = embedUrl;
+        iframe.width = '100%';
+        iframe.height = iframeHeight;
+        iframe.frameBorder = '0';
+        iframe.allow = 'autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture';
+        iframe.loading = 'lazy';
+        
+        const embedContainer = document.createElement('div');
+        embedContainer.className = 'spotify-embed-container';
+        embedContainer.appendChild(iframe);
+        songBlock.appendChild(embedContainer);
+      }
+      // ====================================================================
 
-        snapshot.forEach(doc => {
-          const track = doc.data();
-          const listItem = document.createElement('li');
-          listItem.className = 'playlist-item';
-          listItem.setAttribute('data-id', doc.id);
+      const removeBtn = document.createElement('button');
+      removeBtn.className = 'remove-btn';
+      removeBtn.textContent = 'Remove';
+      removeBtn.onclick = () => removeSong(doc.id);
+      songBlock.appendChild(removeBtn);
 
-          let embedHtml = '';
-          
-          // ====================================================================
-          // ✅ PERBAIKAN UTAMA: URL EMBED SPOTIFY DIBENARKAN (BARIS 174)
-          // ====================================================================
-          if (track.spotifyId && (track.spotifyType === 'track' || track.spotifyType === 'album' || track.spotifyType === 'playlist')) {
-            // Menggunakan format embed standar Spotify yang benar
-            // Formatnya adalah: https://open.spotify.com/embed/{type}/{id}
-            const embedUrl = `https://open.spotify.com/embed/${track.spotifyType}/${track.spotifyId}`;
-            const iframeHeight = (track.spotifyType === 'track') ? 80 : 352;
-            embedHtml = `
-              <div class="spotify-embed-container">
-                <iframe style="border-radius:12px" src="${embedUrl}"
-                  width="100%" height="${iframeHeight}" frameBorder="0" allowfullscreen=""
-                  allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                  loading="lazy">
-                </iframe>
-              </div>
-            `;
-          } else {
-            // Fallback jika ID atau Tipe tidak terdeteksi
-            embedHtml = `<span><strong>URL:</strong> <a href="${track.spotifyUrl}" target="_blank" style="color: #9EC0FF;">${track.spotifyUrl}</a></span>`;
-          }
-          // ====================================================================
-
-          listItem.innerHTML = `
-            ${embedHtml}
-            <button class="remove-btn" onclick="removeTrack('${doc.id}')">Delete</button>
-          `;
-          playlistElement.appendChild(listItem);
-        });
-      });
+      // Add the new item to the top
+      playlistElement.prepend(songBlock);
     }
 
-    async function removeTrack(id) {
-      if (!confirm('Are you sure you want to delete this song?')) return;
+    async function fetchPlaylist() {
+        const playlistElement = document.getElementById('playlist');
+        playlistElement.innerHTML = '<p style="text-align: center; color: #ccc;">Loading songs...</p>'; // Reset loading text initially
+
+        db.collection('ana_playlist_items').orderBy('addedAt', 'desc').onSnapshot((snapshot) => {
+            playlistElement.innerHTML = ''; // Clear existing list
+
+            if (snapshot.empty) {
+                playlistElement.innerHTML = '<p style="text-align: center; color: #ccc;">No songs in the playlist yet. Add one!</p>';
+                return;
+            }
+
+            snapshot.forEach(doc => {
+                displaySong(doc);
+            });
+        }, (error) => {
+            console.error("Error fetching playlist:", error);
+            playlistElement.innerHTML = '<p style="text-align: center; color: #ff6666;">Failed to load playlist. Check your connection or Firebase rules.</p>';
+        });
+    }
+
+    async function removeSong(id) {
+      if (!confirm('Are you sure you want to remove this song?')) return;
       try {
-        await db.collection('playlist_urls').doc(id).delete();
-        alert('Song successfully deleted!');
+        await db.collection('ana_playlist_items').doc(id).delete();
+        alert('Song successfully removed!');
       } catch (error) {
-        console.error("Error removing URL:", error);
-        alert(`Failed to delete: ${error.message}`);
+        console.error("Error removing song:", error);
+        alert(`Failed to remove song: ${error.message}`);
       }
     }
 
     document.addEventListener("DOMContentLoaded", fetchPlaylist);
   </script>
+
 </body>
 </html>
