@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Playlist for Anton</title>
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline'; frame-src open.spotify.com https://open.spotify.com;"> 
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline'; frame-src https://open.spotify.com https://spotify.com;"> 
   <style>
     body {
       background-color: #0E162B;
@@ -219,8 +219,8 @@
     const db = firebase.firestore();
 
     // ====================================================================
-    // ⬇️ BAGIAN 1: PERBAIKAN REGEX DAN VALIDASI spotify.link
-    // Match[3] adalah grup untuk spotify.link (ID lagu)
+    // ⬇️ BAGIAN 1: PERBAIKAN REGEX DAN VALIDASI spotify.link (SOLUSI)
+    // Regex ini sudah benar dan mendukung open.spotify.com, spotify.link, dan spotify:uri
     // ====================================================================
     const spotifyUrlRegex = /^(?:https?:\/\/(?:open\.spotify\.com\/(track|album|playlist|artist)\/([a-zA-Z0-9]+)(?:\?.*)?|spotify\.link\/([a-zA-Z0-9]+))|spotify:((track|album|playlist|artist):)?([a-zA-Z0-9]+))$/;
     
@@ -287,8 +287,8 @@
           // ⬇️ BAGIAN 2: PERBAIKAN KRUSIAL URL EMBED SPOTIFY (SOLUSI FINAL AGAR MUNCUL) ⬇️
           // ====================================================================
           if (track.spotifyId && (track.spotifyType === 'track' || track.spotifyType === 'album' || track.spotifyType === 'playlist')) {
-            // Gunakan format SRC yang benar. Tipe dan ID harus ada.
-            const embedUrl = `https://open.spotify.com/embed/$${track.spotifyType}/${track.spotifyId}?utm_source=generator`;
+            // PERBAIKAN: Menggunakan format URL embed yang benar dari Spotify
+            const embedUrl = `https://open.spotify.com/embed/${track.spotifyType}/${track.spotifyId}?utm_source=generator`;
 
             const iframeHeight = (track.spotifyType === 'track') ? 80 : 352;
             embedHtml = `
@@ -329,3 +329,4 @@
   </script>
 </body>
 </html>
+
