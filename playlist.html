@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Playlist for Anton</title>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline'; frame-src https://open.spotify.com;"> 
   <style>
     body {
       background-color: #0E162B;
@@ -43,10 +44,10 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      object-position: center;
+      object-position: center; /* REVISI CSS GAMBAR: Pastikan ada titik koma */
       position: absolute;
-      top: 0;
-      left: 0;
+      top: 0; /* REVISI CSS GAMBAR: Tambahan untuk posisi */
+      left: 0; /* REVISI CSS GAMBAR: Tambahan untuk posisi */
     }
 
     .image-background-wrapper::before {
@@ -178,8 +179,7 @@
 
   <div class="container">
     <div class="image-background-wrapper">
-      <img src="kiyowo.jpg" alt="Background Image">
-    </div>
+      <img src="kiyowo.jpg" alt="Background Image"> </div>
     <div class="content-overlay">
       <h1>Playlist for Anton</h1>
       <div class="add-track-form">
@@ -218,7 +218,7 @@
     const db = firebase.firestore();
 
     // ====================================================================
-    // ⬇️ BAGIAN 1: PERUBAHAN REGEX UNTUK MENDUKUNG spotify.link ⬇️
+    // ⬇️ BAGIAN 1: PERUBAHAN REGEX UNTUK MENDUKUNG spotify.link (Sudah OK) ⬇️
     // ====================================================================
     const spotifyUrlRegex = /^(?:https?:\/\/(?:open\.spotify\.com\/(track|album|playlist|artist)\/([a-zA-Z0-9]+)(?:\?.*)?|spotify\.link\/([a-zA-Z0-9]+)|spotify:((track|album|playlist|artist):)?([a-zA-Z0-9]+)))$/;
     // ====================================================================
@@ -242,7 +242,7 @@
       let id = match[2] || match[5];
 
       // ====================================================================
-      // ⬇️ BAGIAN 2: LOGIKA BARU UNTUK MENGATASI spotify.link ⬇️
+      // ⬇️ BAGIAN 2: LOGIKA BARU UNTUK MENGATASI spotify.link (Sudah OK) ⬇️
       // ====================================================================
       // Jika match[3] ada, berarti itu adalah tautan pendek (spotify.link)
       if (match[3]) {
@@ -287,12 +287,12 @@
           let embedHtml = '';
           
           // ====================================================================
-          // ⬇️ BAGIAN 3: PERBAIKAN URL EMBED SPOTIFY UNTUK FETCH PLAYLIST ⬇️
-          // (Ini penting agar embed-nya bisa muncul dengan benar)
+          // ⬇️ BAGIAN 3: PERBAIKAN URL EMBED SPOTIFY (SOLUSI UNTUK 'Page Not Available') ⬇️
           // ====================================================================
           if (track.spotifyId && (track.spotifyType === 'track' || track.spotifyType === 'album' || track.spotifyType === 'playlist')) {
-            // Menggunakan format embed standar Spotify
-            const embedUrl = `https://open.spotify.com/embed/${track.spotifyType}/${track.spotifyId}`;
+            // REVISI KRUSIAL: Menggunakan format embed standar dan andal.
+            const embedUrl = `https://open.spotify.com/embed/${track.spotifyType}/${track.spotifyId}?utm_source=generator`;
+
             const iframeHeight = (track.spotifyType === 'track') ? 80 : 352;
             embedHtml = `
               <div class="spotify-embed-container">
