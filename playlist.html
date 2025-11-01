@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Playlist for Anton</title>
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline'; frame-src https://open.spotify.com;"> 
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline'; frame-src open.spotify.com https://open.spotify.com;"> 
   <style>
     body {
       background-color: #0E162B;
@@ -44,10 +44,10 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      object-position: center; /* REVISI CSS GAMBAR: Pastikan ada titik koma */
+      object-position: center;
       position: absolute;
-      top: 0; /* REVISI CSS GAMBAR: Tambahan untuk posisi */
-      left: 0; /* REVISI CSS GAMBAR: Tambahan untuk posisi */
+      top: 0;
+      left: 0;
     }
 
     .image-background-wrapper::before {
@@ -179,7 +179,8 @@
 
   <div class="container">
     <div class="image-background-wrapper">
-      <img src="kiyowo.jpg" alt="Background Image"> </div>
+      <img src="kiyowo.jpg" alt="Background Image">
+    </div>
     <div class="content-overlay">
       <h1>Playlist for Anton</h1>
       <div class="add-track-form">
@@ -218,11 +219,11 @@
     const db = firebase.firestore();
 
     // ====================================================================
-    // ⬇️ BAGIAN 1: PERUBAHAN REGEX UNTUK MENDUKUNG spotify.link (Sudah OK) ⬇️
+    // ⬇️ BAGIAN 1: PERBAIKAN REGEX DAN VALIDASI spotify.link
+    // Match[3] adalah grup untuk spotify.link (ID lagu)
     // ====================================================================
-    const spotifyUrlRegex = /^(?:https?:\/\/(?:open\.spotify\.com\/(track|album|playlist|artist)\/([a-zA-Z0-9]+)(?:\?.*)?|spotify\.link\/([a-zA-Z0-9]+)|spotify:((track|album|playlist|artist):)?([a-zA-Z0-9]+)))$/;
-    // ====================================================================
-
+    const spotifyUrlRegex = /^(?:https?:\/\/(?:open\.spotify\.com\/(track|album|playlist|artist)\/([a-zA-Z0-9]+)(?:\?.*)?|spotify\.link\/([a-zA-Z0-9]+))|spotify:((track|album|playlist|artist):)?([a-zA-Z0-9]+))$/;
+    
     async function addTrack() {
       const spotifyUrlInput = document.getElementById('spotifyUrl');
       const url = spotifyUrlInput.value.trim();
@@ -238,19 +239,15 @@
         return;
       }
 
-      let type = match[1] || match[4];
-      let id = match[2] || match[5];
+      // Cari tipe (track|album|playlist|artist)
+      let type = match[1] || match[4]; 
+      // Cari ID dari tautan normal (match[2]), tautan spotify: (match[5]), atau tautan pendek (match[3])
+      let id = match[2] || match[5] || match[3];
 
-      // ====================================================================
-      // ⬇️ BAGIAN 2: LOGIKA BARU UNTUK MENGATASI spotify.link (Sudah OK) ⬇️
-      // ====================================================================
-      // Jika match[3] ada, berarti itu adalah tautan pendek (spotify.link)
-      if (match[3]) {
-        // Asumsikan ini adalah 'track' (paling umum) karena link pendek tidak memberi tahu jenisnya.
+      // Jika menggunakan spotify.link, tipe-nya harus diatur secara manual (asumsi track, karena paling umum)
+      if (match[3] && !type) {
         type = 'track'; 
-        id = match[3];
       }
-      // ====================================================================
       
       try {
         await db.collection('playlist_urls').add({
@@ -287,11 +284,11 @@
           let embedHtml = '';
           
           // ====================================================================
-          // ⬇️ BAGIAN 3: PERBAIKAN URL EMBED SPOTIFY (SOLUSI UNTUK 'Page Not Available') ⬇️
+          // ⬇️ BAGIAN 2: PERBAIKAN KRUSIAL URL EMBED SPOTIFY (SOLUSI FINAL AGAR MUNCUL) ⬇️
           // ====================================================================
           if (track.spotifyId && (track.spotifyType === 'track' || track.spotifyType === 'album' || track.spotifyType === 'playlist')) {
-            // REVISI KRUSIAL: Menggunakan format embed standar dan andal.
-            const embedUrl = `https://open.spotify.com/embed/${track.spotifyType}/${track.spotifyId}?utm_source=generator`;
+            // Gunakan format SRC yang benar. Tipe dan ID harus ada.
+            const embedUrl = `https://open.spotify.com/embed/$${track.spotifyType}/${track.spotifyId}?utm_source=generator`;
 
             const iframeHeight = (track.spotifyType === 'track') ? 80 : 352;
             embedHtml = `
