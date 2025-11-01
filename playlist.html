@@ -219,8 +219,7 @@
     const db = firebase.firestore();
 
     // ====================================================================
-    // ⬇️ BAGIAN 1: PERBAIKAN REGEX DAN VALIDASI spotify.link (SOLUSI)
-    // Regex ini sudah benar dan mendukung open.spotify.com, spotify.link, dan spotify:uri
+    // ⬇️ BAGIAN 1: PERBAIKAN REGEX DAN LOGIKA ADDTRACK (SOLUSI ADD TO PLAYLIST) ⬇️
     // ====================================================================
     const spotifyUrlRegex = /^(?:https?:\/\/(?:open\.spotify\.com\/(track|album|playlist|artist)\/([a-zA-Z0-9]+)(?:\?.*)?|spotify\.link\/([a-zA-Z0-9]+))|spotify:((track|album|playlist|artist):)?([a-zA-Z0-9]+))$/;
     
@@ -234,19 +233,26 @@
       }
 
       const match = url.match(spotifyUrlRegex);
+      
       if (!match) {
         alert('Masukkan URL Spotify yang valid.');
         return;
       }
 
-      // Cari tipe (track|album|playlist|artist)
+      // Mencari tipe: Grup 1 (dari open.spotify) atau Grup 4 (dari spotify:uri)
       let type = match[1] || match[4]; 
-      // Cari ID dari tautan normal (match[2]), tautan spotify: (match[5]), atau tautan pendek (match[3])
-      let id = match[2] || match[5] || match[3];
+      // Mencari ID: Grup 2 (dari open.spotify), Grup 6 (dari spotify:uri), atau Grup 3 (dari spotify.link)
+      let id = match[2] || match[6] || match[3];
 
-      // Jika menggunakan spotify.link, tipe-nya harus diatur secara manual (asumsi track, karena paling umum)
+      // Jika menggunakan spotify.link (Grup 3 ada), tipe-nya diasumsikan 'track'
       if (match[3] && !type) {
         type = 'track'; 
+      }
+      
+      // Validasi tambahan untuk memastikan ID dan Tipe diekstrak
+      if (!id || !type) {
+          alert('Gagal mengekstrak ID lagu/tipe. Pastikan format URL benar.');
+          return;
       }
       
       try {
@@ -284,11 +290,11 @@
           let embedHtml = '';
           
           // ====================================================================
-          // ⬇️ BAGIAN 2: PERBAIKAN KRUSIAL URL EMBED SPOTIFY (SOLUSI FINAL AGAR MUNCUL) ⬇️
+          // ⬇️ BAGIAN 2: PERBAIKAN URL EMBED SPOTIFY (SOLUSI AGAR MUNCUL) ⬇️
           // ====================================================================
           if (track.spotifyId && (track.spotifyType === 'track' || track.spotifyType === 'album' || track.spotifyType === 'playlist')) {
             // PERBAIKAN: Menggunakan format URL embed yang benar dari Spotify
-            const embedUrl = `https://open.spotify.com/embed/${track.spotifyType}/${track.spotifyId}?utm_source=generator`;
+            const embedUrl = `open.spotify.com/...5{track.spotifyType}/${track.spotifyId}?utm_source=generator`;
 
             const iframeHeight = (track.spotifyType === 'track') ? 80 : 352;
             embedHtml = `
@@ -329,4 +335,3 @@
   </script>
 </body>
 </html>
-
