@@ -176,7 +176,7 @@
 
   <div class="container">
     <div class="image-background-wrapper">
-      <img src="kiyowo.jpg" alt="Background Image">
+      <img src="kiyowo (1).jpg" alt="Background Image">
     </div>
     <div class="content-overlay">
       <h1>Playlist for Anton</h1>
@@ -215,7 +215,11 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    const spotifyUrlRegex = /^(?:https?:\/\/(?:open\.spotify\.com\/(track|album|playlist|artist)\/([a-zA-Z0-9]+)(?:\?.*)?|spotify:((track|album|playlist|artist):)?([a-zA-Z0-9]+)))$/;
+    // ====================================================================
+    // ⬇️ BAGIAN 1: PERUBAHAN REGEX UNTUK MENDUKUNG spotify.link ⬇️
+    // ====================================================================
+    const spotifyUrlRegex = /^(?:https?:\/\/(?:open\.spotify\.com\/(track|album|playlist|artist)\/([a-zA-Z0-9]+)(?:\?.*)?|spotify\.link\/([a-zA-Z0-9]+)|spotify:((track|album|playlist|artist):)?([a-zA-Z0-9]+)))$/;
+    // ====================================================================
 
     async function addTrack() {
       const spotifyUrlInput = document.getElementById('spotifyUrl');
@@ -235,6 +239,17 @@
       let type = match[1] || match[4];
       let id = match[2] || match[5];
 
+      // ====================================================================
+      // ⬇️ BAGIAN 2: LOGIKA BARU UNTUK MENGATASI spotify.link ⬇️
+      // ====================================================================
+      // Jika match[3] ada, berarti itu adalah tautan pendek (spotify.link)
+      if (match[3]) {
+        // Asumsikan ini adalah 'track' (paling umum) karena link pendek tidak memberi tahu jenisnya.
+        type = 'track'; 
+        id = match[3];
+      }
+      // ====================================================================
+      
       try {
         await db.collection('playlist_urls').add({
           spotifyUrl: url,
@@ -244,7 +259,7 @@
         });
         spotifyUrlInput.value = '';
         alert('URL Spotify berhasil ditambahkan!');
-        fetchPlaylist(); // Ini baris penting yang baru ditambahkan
+        fetchPlaylist(); 
       } catch (error) {
         console.error("Error adding URL:", error);
         alert(`Gagal menambahkan URL: ${error.message}`);
@@ -268,9 +283,14 @@
           listItem.setAttribute('data-id', doc.id);
 
           let embedHtml = '';
-          // Corrected the Googleusercontent URL structure for Spotify embed
+          
+          // ====================================================================
+          // ⬇️ BAGIAN 3: PERBAIKAN URL EMBED SPOTIFY UNTUK FETCH PLAYLIST ⬇️
+          // (Ini penting agar embed-nya bisa muncul dengan benar)
+          // ====================================================================
           if (track.spotifyId && (track.spotifyType === 'track' || track.spotifyType === 'album' || track.spotifyType === 'playlist')) {
-            const embedUrl = `https://open.spotify.com/embed/${track.spotifyType}/${track.spotifyId}`; // Corrected URL
+            // Menggunakan format embed standar Spotify
+            const embedUrl = `https://open.spotify.com/embed/${track.spotifyType}/${track.spotifyId}`;
             const iframeHeight = (track.spotifyType === 'track') ? 80 : 352;
             embedHtml = `
               <div class="spotify-embed-container">
@@ -284,6 +304,7 @@
           } else {
             embedHtml = `<span><strong>URL:</strong> <a href="${track.spotifyUrl}" target="_blank" style="color: #9EC0FF;">${track.spotifyUrl}</a></span>`;
           }
+          // ====================================================================
 
           listItem.innerHTML = `
             ${embedHtml}
