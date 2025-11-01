@@ -203,9 +203,11 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
   <script>
-    // START OF CORRECTED FIREBASE CONFIGURATION (BASED ON PREVIOUS PROJECT)
+    // START OF CORRECTED FIREBASE CONFIGURATION (BARIS 140)
     const firebaseConfig = {
-      apiKey: "AIzaSyCh39UthfGp",
+      // ⚠️ API KEY INI HARUS DIGANTI DENGAN KUNCI LENGKAP DARI PROYEK FIREBASE ANDA 
+      // KARENA KUNCI YANG LAMA TERLIHAT TIDAK LENGKAP.
+      apiKey: "AIzaSyCh39UthfGp", // BARIS 142
       authDomain: "anton-web-message.firebaseapp.com",
       projectId: "anton-web-message",
       storageBucket: "anton-web-message.appspot.com",
@@ -287,12 +289,11 @@
           let embedHtml = '';
           
           // ====================================================================
-          // ⬇️ BAGIAN 3: PERBAIKAN URL EMBED SPOTIFY UNTUK FETCH PLAYLIST ⬇️
-          // (Ini penting agar embed-nya bisa muncul dengan benar)
+          // ⬇️ BAGIAN 3: PERBAIKAN UTAMA URL EMBED SPOTIFY ⬇️
           // ====================================================================
           if (track.spotifyId && (track.spotifyType === 'track' || track.spotifyType === 'album' || track.spotifyType === 'playlist')) {
-            // Menggunakan format embed standar Spotify
-            const embedUrl = `https://open.spotify.com/embed/${track.spotifyType}/${track.spotifyId}`;
+            // ✅ BARIS 202: URL embed diubah ke format yang benar (perbaikan fungsionalitas)
+            const embedUrl = `open.spotify.com/embed/${track.spotifyType}/${track.spotifyId}?utm_source=generator`;
             const iframeHeight = (track.spotifyType === 'track') ? 80 : 352;
             embedHtml = `
               <div class="spotify-embed-container">
@@ -333,5 +334,4 @@
 </body>
 </html>
 
-
-kamu adalah seorang yang sangat cerdas, aku ingin kamu membuat tampilan lagu yang di tambahkan pada playlist ini muncul, tapi kamu tidak boleh merusak fungsi lain pada cooding ini. apalagi Api nya  cukup yang saya perintahkan
+      
